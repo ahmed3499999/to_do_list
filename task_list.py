@@ -15,7 +15,7 @@ class Task:
 # do not manipulate it directly, instead use ListManager functions
 # do not create task list objects directly, instead use create_list
 class TaskList:
-    def __init__(self, name: str, pinned: bool, tasks: list[Task]) -> None:
+    def __init__(self, name: str, pinned: bool, *tasks: list[Task]) -> None:
         self.name = name
         self.pinned = pinned
         self.tasks = tasks
@@ -25,18 +25,24 @@ class TaskList:
 # direct database queries should be kept in a separate file
 class ListManager:
     @staticmethod
-    def create_list(name: str, pinned: bool) -> None:
+    def create_list(name: str, pinned: bool) -> TaskList:
         newList = TaskList(name, pinned)
         
         #TODO database call
 
+    def add_task(**kwargs) -> None:
+        #TODO database call for inserting empty task
+        #retrieve task for id
+        ListManager.update_task(kwargs)
+        pass
+
     @staticmethod
-    def update_list(name: str, **kwargs) -> None:
+    def update_list(name: str, **kwargs) -> TaskList:
         #TODO databse update
         pass
 
     @staticmethod
-    def update_task(listName: str, taskId: int, **attr) -> None:
+    def update_task(listName: str, taskId: int, **attr) -> TaskList:
         #TODO database update
         pass
 
@@ -48,4 +54,14 @@ class ListManager:
     @staticmethod
     def get_all_lists() -> list[TaskList]:
         #TODO database retrieval
+        pass
+
+    @staticmethod
+    def delete_task(listName: str, taskId: int) -> None:
+        #TODO database query for deletion
+        pass
+
+    @staticmethod
+    def delete_task_list(listName: str) -> None:
+        #TODO database query for deletion
         pass

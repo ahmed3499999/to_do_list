@@ -1,1 +1,1 @@
-print("welcome")
+open("filetest")
