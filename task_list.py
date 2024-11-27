@@ -114,11 +114,20 @@ class ListManager:
 
     # checks if there is a list with this name and then sorted based on Eisenhower matrix
     @staticmethod
-    def sort_tasks(list_name: str, deadline: datetime) -> TaskList:
+    def sort_tasks(list_name: str) -> TaskList:
         #TODO database retrieval
         lst = ListManager.search_list(list_name)
         if lst is None:
             return None
+        lst1 = []
+        lst2 = []
+        for task in lst.tasks:
+            if task.important:
+                lst1.append(task)
+            else:
+                lst2.append(task)
+        lst.tasks = lst1.extend(lst2)
+        return lst
 
     @staticmethod
     def search_task(list_name: str, task_name: str) -> Task:
