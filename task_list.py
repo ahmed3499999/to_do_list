@@ -112,7 +112,7 @@ class ListManager:
         lst.tasks.sort()
         return lst
 
-    # checks if there is a list with this name and then sorted based on Eisenhower matrix
+    # checks if there is a list with this name and then sorted based on importance
     @staticmethod
     def sort_tasks(list_name: str) -> TaskList:
         #TODO database retrieval
