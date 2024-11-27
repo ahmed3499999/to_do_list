@@ -1,10 +1,13 @@
 import sys
+from task_list import *
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtWidgets import (
     QMessageBox,
     QListWidgetItem,
+    QListView,
     QWidget,
+    QListWidget,
     QVBoxLayout,
     QLabel,
     QHBoxLayout,
@@ -72,27 +75,35 @@ class MainWindow(QtWidgets.QMainWindow):
         # Connect GUI elements to their respective functions
         self.addTaskButton.clicked.connect(self.add_task)
         self.removeTaskButton.clicked.connect(self.remove_task)
+        # self..clicked.connect(self.remove_task)
         self.sortTasksDropdown.currentIndexChanged.connect(self.sort_tasks)
         self.repeatInput.currentIndexChanged.connect(self.handle_repeat_change)
 
         # Initialize the date input with today's date
         self.dateInput.setDate(QDate.currentDate())
 
-        # Set up notification timer
-        self.notification_timer = QTimer(self)
-        self.notification_timer.timeout.connect(self.check_notifications)
-        self.notification_timer.start(60000)  # Check every 60 seconds
+        self.update_task_list()
 
         # Task list to hold added tasks
-        self.tasks = []
+        
 
     def add_task(self):
-        """Placeholder function for adding a new task."""
-        print("Add Task button clicked")
+        title = self.taskNameInput.text()
+        desc = self.taskDescInput.toPlainText()
+        ListManager.add_task('', title=title, describtion=desc)        
+        self.update_task_list()
+        # print(self.priorityInput.currentText())
         # Placeholder logic for adding a task
-        # Retrieve inputs: taskNameInput, taskDescInput, dateInput, priorityInput, repeatInput
+        # Retrieve inputs:. taskNameInput, taskDescInput, dateInput, priorityInput, repeatInput
         # Create a task object or entry in a list
-        # Update the QListWidget with the new task
+       
+    def update_task_list(self):
+        #Empty list
+        while self.taskListWidget.count() > 0:
+            self.taskListWidget.takeItem(0)
+
+        l: TaskList = ListManager.get_list('')
+        self.taskListWidget.addItems([task.title for task in l.tasks])
 
     def remove_task(self):
         """Placeholder function for removing a selected task."""
