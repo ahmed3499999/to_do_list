@@ -1,4 +1,5 @@
 import sys
+from datetime import date
 from task_list import *
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QDate, QTimer
@@ -17,19 +18,20 @@ from PyQt5.QtWidgets import (
 class TaskWidget(QWidget):
     """Custom widget to represent a task in the list."""
 
-    def __init__(self, task_name, task_desc, deadline, priority, repeat, parent=None):
+    def __init__(self, title, desc, deadline, priority, repeat, parent=None):
         super().__init__(parent)
 
         # Layouts
         main_layout = QVBoxLayout()
         header_layout = QHBoxLayout()
-
+    
         # Task Name
-        self.task_name_label = QLabel(task_name)
-        self.task_name_label.setStyleSheet(
+        self.title = title
+        self.title_label = QLabel(title)
+        self.title_label.setStyleSheet(
             "font-size: 16px; font-weight: bold; color: #ffffff;"
         )
-        header_layout.addWidget(self.task_name_label)
+        header_layout.addWidget(self.title_label)
 
         # Priority
         self.priority_label = QLabel(priority)
@@ -50,15 +52,15 @@ class TaskWidget(QWidget):
         )
 
         # Task Description
-        self.task_desc_label = QLabel(task_desc)
-        self.task_desc_label.setStyleSheet(
+        self.desc_label = QLabel(desc)
+        self.desc_label.setStyleSheet(
             "font-size: 14px; color: #cccccc; margin-top: 5px;"
         )
 
         # Assemble
         main_layout.addLayout(header_layout)
         main_layout.addWidget(self.repeat_label)
-        main_layout.addWidget(self.task_desc_label)
+        main_layout.addWidget(self.desc_label)
 
         self.setLayout(main_layout)
         self.setStyleSheet(
@@ -82,35 +84,54 @@ class MainWindow(QtWidgets.QMainWindow):
         # Initialize the date input with today's date
         self.dateInput.setDate(QDate.currentDate())
 
+        # to retrieve tasks in database on startup
         self.update_task_list()
-
-        # Task list to hold added tasks
         
 
     def add_task(self):
-        title = self.taskNameInput.text()
-        desc = self.taskDescInput.toPlainText()
-        ListManager.add_task('', title=title, describtion=desc)        
+        title = self.taskNameInput.text().strip()
+        desc = self.taskDescInput.toPlainText().strip()
+        qdate = self.dateInput.date()
+        #convert QDate to python Date object
+        deadline = date(qdate.year(),qdate.month(),qdate.day())
+        priority_text = self.priorityInput.currentText().lower().strip()
+        repeatness_text = self.repeatInput.currentText().lower().strip()
+        
+        # convert string priority and repeatness to integer for database storage
+        TaskManager.add_task(title=title, description=desc, deadline=deadline,
+                             priority=Priority[priority_text].value,
+                             repeatness=Repeat[repeatness_text].value)        
         self.update_task_list()
-        # print(self.priorityInput.currentText())
-        # Placeholder logic for adding a task
-        # Retrieve inputs:. taskNameInput, taskDescInput, dateInput, priorityInput, repeatInput
-        # Create a task object or entry in a list
        
     def update_task_list(self):
-        #Empty list
+        # make the list empty first
         while self.taskListWidget.count() > 0:
             self.taskListWidget.takeItem(0)
 
-        l: TaskList = ListManager.get_list('')
-        self.taskListWidget.addItems([task.title for task in l.tasks])
+        # loop over every task we have and create a widget for it in the gui list
+        for task in TaskManager.get_all_tasks():
+            # Create and add custom task widget
+            task_widget = TaskWidget(
+                task.title, task.description, task.deadline.strftime("%Y-%m-%d"),
+                Priority(task.priority).name.capitalize(), Repeat(task.repeatness).name.capitalize()
+            )
+            
+            # stuff for gui, doesnt matter
+            list_item = QListWidgetItem()
+            list_item.setSizeHint(task_widget.sizeHint())
+            self.taskListWidget.addItem(list_item)
+            self.taskListWidget.setItemWidget(list_item, task_widget)
 
     def remove_task(self):
-        """Placeholder function for removing a selected task."""
-        print("Remove Task button clicked")
-        # Placeholder logic for removing a task
-        # Identify the selected task from the QListWidget
-        # Remove the task from the list and the QListWidget
+        #find selected row in gui list
+        row = self.taskListWidget.currentRow()
+        if row < 0: return
+        
+        # retrieve item at row, then retrieve the task widget at that row and get its title
+        item = self.taskListWidget.item(row)
+        delete_task(self.taskListWidget.itemWidget(item).title)
+
+        self.update_task_list()
 
     def sort_tasks(self):
         """Placeholder function for sorting tasks."""
