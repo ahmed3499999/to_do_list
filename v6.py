@@ -149,7 +149,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def add_to_google_calendar(self, task):
         """Placeholder function for integrating Google Calendar."""
-        print("Add to Google Calendar function triggered")
+        print("Add to G                      -tion triggered")
         # Placeholder logic for adding a task to Google Calendar
         # Integrate with Google Calendar API (requires credentials.json and authentication)
 

@@ -61,30 +61,3 @@ class TaskManager:
         if not TaskManager.task_exists(title): return
 
         delete_task(title)
-    
-    #TODO figure out this shit its all fucked
-    # checks if there is a list with this name and then sorted alphabetically
-    @staticmethod
-    def sort_tasks_alpha(list_name: str) -> List[Task]:
-        lst = TaskManager.search_list(list_name)
-        if lst is None:
-            return None
-        lst.tasks.sort()
-        return lst
-
-    # checks if there is a list with this name and then sorted based on importance
-    @staticmethod
-    def sort_tasks() -> List[Task]:
-        #TODO database retrieval
-        lst = TaskManager.search_list(list_name)
-        if lst is None:
-            return None
-        lst1 = []
-        lst2 = []
-        for task in lst.tasks:
-            if task.important:
-                lst1.append(task)
-            else:
-                lst2.append(task)
-        lst.tasks = lst1.extend(lst2)
-        return lst
