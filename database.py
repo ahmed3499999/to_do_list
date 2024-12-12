@@ -39,7 +39,6 @@ def update_task(current_title: str,**kwargs) -> None:
         cursor.execute("UPDATE tasks SET repeatness=%s where title=%s  ;", (kwargs['repeatness'],current_title))
         connct.commit()
 
-
 def delete_task(title: str) -> None:
     cursor.execute("DELETE FROM tasks WHERE title=%s;",(title,))
     connct.commit()
