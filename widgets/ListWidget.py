@@ -5,6 +5,7 @@ from PyQt5.Qt5 import *
 from PyQt5.QtWidgets import *
 from .PinButton import PinButton
 from .colors import *
+from task_list import *
 
 class ListLineEdit(QLineEdit):
     style = """
@@ -78,33 +79,41 @@ class ListLineEdit(QLineEdit):
 
 class ListWidget(QWidget):
     selected = pyqtSignal(QObject)
-    pingToggled = pyqtSignal(bool)
+    pinToggled = pyqtSignal(bool)
+    nameChanged = pyqtSignal(str)
     instances = []
     
-    def __init__(self, text):
+    def __init__(self, listData: TaskList):
         super(ListWidget, self).__init__()
+        self.listData = listData
         self.setStyleSheet('padding:0; margin: 0')
-        self.line = ListLineEdit(text)
+        self.line = ListLineEdit(listData.name)
         self.line.clicked.connect(self.ToggleActive)
         self.line.clicked.connect(lambda: self.selected.emit(self))
-        
+        self.line.editingFinished.connect(lambda: self.nameChanged.emit(self.line.text()))
+        self.line.editingFinished.connect(lambda: setattr(self.listData, 'name', self.line.text()))
+
         layout = QHBoxLayout(self)
         layout.setSpacing(0)
         layout.setContentsMargins(0, 0, 0, 0)
 
         self.btn = PinButton()
+        if listData.pinned:
+            self.btn.toggleIcon()
         self.pinToggled = self.btn.pinToggled
 
         layout.addWidget(self.line)
         layout.addWidget(self.btn)
 
         self.instances.append(self)
+        self.ToggleActive()
     
     def ToggleActive(self):
         for i in self.instances:
             i.ToggleInactive()
         self.isSelected = True
         self.line.ToggleActive()
+        self.selected.emit(self)
 
     def ToggleInactive(self):
         self.isSelected = False
