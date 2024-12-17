@@ -134,3 +134,4 @@ class ListManager:
                 return
         
         db.delete_task(task_id)
+  

@@ -2,7 +2,7 @@ import sys
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtWidgets import QMessageBox
 import goolge_log_in
-import gui.account_manager as account_manager
+import account_manager as account_manager
 # import database 
 class LogIn(QtWidgets.QMainWindow):
     def __init__(self):

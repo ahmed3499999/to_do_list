@@ -2,7 +2,7 @@ import sys
 from PyQt5 import *
 from PyQt5.Qt import *
 from PyQt5.QtGui import *
-from PyQt5.QtCore import *
+from PyQt5.QtCore import *              
 from PyQt5.Qt5 import *
 from PyQt5.QtWidgets import *
 from widgets.PinButton import PinButton
@@ -48,6 +48,8 @@ class MainWindow(QStackedWidget):
         self.closePanel()
         self.mainView.refreshTaskList()
 
+    # 2024-05-02
+    # 
     def deleteTask(self, task):
         ListManager.delete_task(task.task_id)
         self.closePanel()

@@ -107,7 +107,7 @@ class TaskViewPanel(QFrame):
         descriptionLabel.setStyleSheet(self.labelStyle)
         self.descriptionInput = QTextEdit()
         self.descriptionInput.setStyleSheet(self.inputEditStyle) 
-        deadlineLabel = QLabel("Deadline")
+        deadlineLabel = QLabel("Date")
         deadlineLabel.setStyleSheet(self.labelStyle)  
         self.deadlineInput = QDateEdit()
         self.deadlineInput.setStyleSheet("""

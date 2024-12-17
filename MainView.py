@@ -133,9 +133,27 @@ class MainView(QMainWindow):
         buttonsContainer.setLayout(buttonsLayout)
         leftLayout.addWidget(buttonsContainer)
         
+        tasksLabelAndSortLayout = QHBoxLayout()
+        tasksLabelAndSortContainer = QWidget()
+        tasksLabelAndSortContainer.setLayout(tasksLabelAndSortLayout)
+        rightLayout.addWidget(tasksLabelAndSortContainer)
+
         tasksTitle = QLabel("Tasks")
         tasksTitle.setStyleSheet("color: %s;font-weight: bold;font-family: 'ui-sans-serif'; font-size: 25px;margin-bottom:8px;" % primary_text)
-        rightLayout.addWidget(tasksTitle)
+        tasksLabelAndSortLayout.addWidget(tasksTitle)
+
+        self.sortBox = QComboBox()
+        self.sortBox.setStyleSheet("""
+        color: %s;
+        background-color: %s;
+        font-weight: bold;
+        font-size: 12px;
+        padding: 5px;
+        padding-left 10px;
+        """ % (primary_text, sidebar_bg))
+        self.sortBox.addItems(["Sort: Priority","Sort: Alphabet", "Sort: Deadline"])
+        self.sortBox.currentTextChanged.connect(lambda t: self.refreshTaskList())
+        tasksLabelAndSortLayout.addWidget(self.sortBox)
 
         self.tasksScrollLayout = QVBoxLayout()
         self.tasksScrollLayout.addStretch()
@@ -178,9 +196,11 @@ class MainView(QMainWindow):
 
     def onTaskPin(self, toggle, task:Task):
         ListManager.toggle_task_pin(task.task_id, toggle)
+        self.refreshTaskList()
 
     def onTaskCheck(self, toggle, task:Task):
         ListManager.toggle_task_check(task.task_id, toggle)
+        self.refreshTaskList()
     
     def onListPin(self, toggle, taskList: TaskList):
         ListManager.toggle_list_pin(taskList.name, toggle)
@@ -191,8 +211,12 @@ class MainView(QMainWindow):
         for i in reversed(range(self.listsScrollLayout.count()-1)): 
             self.listsScrollLayout.itemAt(i).widget().setParent(None)
 
+        sortedLists = ListManager.get_all_lists()
+        sortedLists.sort(key=lambda ls: ls.name)
+        sortedLists.sort(reverse=True, key=lambda ls: ls.pinned)
+        
         #re add lists
-        for i in ListManager.get_all_lists():
+        for i in sortedLists:
             listWidget = ListWidget(i)
             if not self.selectedList:
                 self.selectedList = listWidget
@@ -201,9 +225,12 @@ class MainView(QMainWindow):
             listWidget.nameChanged.connect(lambda new_name, i=i: ListManager.rename_list(i.name, new_name))
             self.listsScrollLayout.insertWidget(self.listsScrollLayout.count() - 1,listWidget) 
 
-        self.selectedList.ToggleActive()
+        if self.selectedList:
+            self.selectedList.ToggleActive()
     
     def refreshTaskList(self):
+        if not self.selectedList: return
+
         # clear list in reverse
         for i in reversed(range(self.tasksScrollLayout.count()-1)): 
             self.tasksScrollLayout.itemAt(i).widget().deleteLater()
@@ -211,6 +238,16 @@ class MainView(QMainWindow):
         #re add lists
         listName = self.selectedList.listData.name
         tasks = ListManager.get_list(listName).tasks
+        if "alphabet" in self.sortBox.currentText().lower():
+            tasks.sort(key=lambda task: task.title)
+            print("sort alph")
+        elif "priority" in self.sortBox.currentText().lower():
+            tasks.sort(key=lambda task: task.priority.value)
+            print("sort prior")
+        elif "deadline" in self.sortBox.currentText().lower():
+            tasks.sort(key=lambda task: task.deadline)
+            print("sort dead")
+        tasks.sort(reverse=True, key=lambda task: task.pinned)
         for i in tasks:
             taskWidget = TaskWidget(i)
             taskWidget.doubleClicked.connect(lambda i=i: self.modifyTaskCallback(i))
