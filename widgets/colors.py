@@ -13,5 +13,9 @@ add_task_button_hover = "#047857"
 unpinned_icon = "#9CA3AF"
 remove_icon = "#6B7280"
 remove_icon_hover = "#DC2626"
+
+BACKGROUND_COLOR = "#f5f5f5"  # Light gray background
+PRIMARY_COLOR = "#4CAF50"    # Green
+SECONDARY_COLOR = "#2196F3"  # Blue
 border = "#E5E7EB"
 hover = "#E5E7EB"

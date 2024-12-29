@@ -85,7 +85,7 @@
       </font>
      </property>
      <property name="text">
-      <string>password</string>
+      <string>Password</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="spassword">
@@ -96,6 +96,9 @@
        <width>171</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
      </property>
     </widget>
     <widget class="QPushButton" name="signup">
@@ -133,6 +136,9 @@
        <height>31</height>
       </rect>
      </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
     </widget>
     <widget class="QLabel" name="label_3">
      <property name="geometry">
@@ -153,7 +159,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Comfairm password</string>
+      <string>Confirm Password</string>
      </property>
     </widget>
     <widget class="QCommandLinkButton" name="Back_to_log_in">

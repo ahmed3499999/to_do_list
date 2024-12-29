@@ -1,3 +1,4 @@
+from task_notifier import check_task_notifications
 import sys
 from PyQt5 import *
 from PyQt5.Qt import *
@@ -12,13 +13,7 @@ from widgets.TaskWidget import TaskWidget
 from TaskViewPanel import TaskViewPanel
 from MainView import MainView
 from task_list import ListManager
-
-# go kill your self
-# database
-# add task
-# main view
-# ui new add tasks callbacks database
-# go kill yourself
+from gui_log_in import main as start_gui
 
 class MainWindow(QStackedWidget):
     def __init__(self):
@@ -62,11 +57,15 @@ class MainWindow(QStackedWidget):
             self.modifyTaskWidget = None
         self.setCurrentIndex(0)
 
-def main():
-   app = QApplication(sys.argv)
-   ex = MainWindow()
-   ex.show()
-   sys.exit(app.exec_())
+def main(app): 
+    check_task_notifications()    
+    # app = QApplication(sys.argv)
+    ex = MainWindow()
+    ex.setFocus()
+    ex.show()
 
 if __name__ == '__main__':
    main()
+
+
+   

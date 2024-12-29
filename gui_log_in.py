@@ -1,9 +1,7 @@
 import sys
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtWidgets import QMessageBox
-import goolge_log_in
-import account_manager as account_manager
-# import database 
+from accounts import AccManager
+
 class LogIn(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -11,7 +9,7 @@ class LogIn(QtWidgets.QMainWindow):
         uic.loadUi("gui1.ui", self)
         
         # self.ERROR_LABEL.setStyleSheet("QLabel{color:'red'}",)
-        # Connect GUI elements to their respective functions
+        # Connect GUI elements to their respective functionsfr
         self.login.clicked.connect(self.log_in_normal)
         self.google.clicked.connect(self.log_in_google)
     def log_in_normal(self):
@@ -24,10 +22,8 @@ class LogIn(QtWidgets.QMainWindow):
             self.ui.ERROR_LABEL.setText(msg)
             self.ERROR_LABEL.setStyleSheet("QLabel{color:'red'}")
             LogIn()
-            
              
-        
-        return_login_task_list=account_manager.AccManager(email,password)
+        return_login_task_list = account_manager.AccManager(email,password)
         if return_login_task_list=='Account not found':
             msg= 'Account not found'
             self.ERROR_LABEL.setText(msg)
@@ -42,8 +38,9 @@ class LogIn(QtWidgets.QMainWindow):
             self.ERROR_LABEL.setStyleSheet("QLabel{color:'red'}")
             
     def log_in_google(self):
-        goolge_log_in.authenticate()
-        goolge_log_in.log_in()
+        print("Login")
+        AccManager.register_google()
+
 class sign_up(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -58,11 +55,8 @@ class sign_up(QtWidgets.QMainWindow):
         password = self.spassword.text().strip()
         password = self.cs_password.text().strip()
     def sign_up_google(self):
-        goolge_log_in.authenticate()
-        goolge_log_in.log_in()
-       
-
-
+        print("Sign up")
+        AccManager.register_google()
 
 def main():
     def transition_to_sign_up():
@@ -82,6 +76,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-        

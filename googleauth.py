@@ -11,20 +11,5 @@ def authenticate():
 
     service = build('oauth2', 'v2', credentials=creds)
     info = service.userinfo().get().execute()
-    f = open('creds.txt', 'a')
-    f.write(info['id'])
-    f.write(info['email'])
-    f.close()
-    # print(info['email'])
-    for k in info.keys():
-        print ( k + ': ' + str(info[k]))
-    return id
-def log_in():
-    f = open('creds.txt', 'a')
-    f.close()
-    f = open('creds.txt', 'r')
-    id = f.readline()
-    f.close()
 
-    if not id: authenticate()       
-    else: print(id)
+    return (info['id'], info['email'])

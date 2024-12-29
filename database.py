@@ -1,6 +1,6 @@
 import mysql.connector
 from typing import List # for statically typed lists
-import random
+
 # Connect to MySQL
 connct = mysql.connector.connect(
     host='127.0.0.1',
@@ -8,7 +8,7 @@ connct = mysql.connector.connect(
     user='root',
     auth_plugin='mysql_native_password'
 )
-cursor = connct.cursor()
+cursor = connct.cursor(buffered=True)
 user_id = '12345'
 
 cursor.execute("USE to_do")
@@ -105,12 +105,46 @@ def delete_list(title: str):
     connct.commit()
 
 def add_email(email,password):
-    cursor.execute("insert into google (email,pass) values (%s,%s)",(email,password))
+    if email_exist(email): return False
+
+    cursor.execute("insert into accounts (email,pass) values (%s,%s)",(email,password))
     connct.commit()
-    print("done")
+    return True
 
 def add_google_id(google_id,email):
-    cursor.execute("insert into google (google_id,email) values (%s,%s)",(google_id,email))
-    connct.commit()
-    print("done")
+    if email_exist(email): return False
     
+    cursor.execute("insert into accounts (google_id,email) values (%s,%s)",(google_id,email))
+    connct.commit()
+    return True
+
+def email_exist(email):
+    cursor.execute("SELECT * FROM accounts WHERE email=%s", (email,))
+    if cursor.fetchone(): return True
+    else: return False
+
+def login_email(email, password):    
+    cursor.execute("SELECT * FROM accounts WHERE email=%s AND pass=%s", (email, password))
+    result = cursor.fetchone() 
+    if result: return result[3]
+
+    connct.commit()
+    return False 
+
+def login_google(id):
+    cursor.execute("SELECT * FROM accounts WHERE google_id=%s", (id,))
+    result = cursor.fetchone()
+    
+    if result: return result[3]
+
+    connct.commit()
+    return False
+
+
+# add_email("elgndi2005@gmail.com", "12345")
+
+# print(login_email("elgndi2005@gmail.com", "12345"))
+
+# from googleauth import authenticate
+# data = authenticate()
+# print(login_google(data[0]))
